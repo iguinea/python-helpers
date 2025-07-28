@@ -32,10 +32,20 @@ python-helpers/
 **`custom_auth.middleware`** - Middleware de autenticación por API key para aplicaciones Starlette/FastAPI
 
 ```python
+# Opción 1: Middleware global para toda la aplicación
 from custom_auth.middleware import create_authentication_middleware
 
-# Crear middleware con API key
 middleware = create_authentication_middleware(api_key="tu-api-key-secreta")
+
+# Opción 2: Verificador para endpoints específicos (FastAPI)
+from fastapi import Depends
+from custom_auth.middleware import create_api_key_verifier
+
+verify_api_key = create_api_key_verifier("tu-api-key-secreta")
+
+@app.get("/protected")
+async def protected_endpoint(verified: None = Depends(verify_api_key)):
+    return {"data": "sensitive"}
 ```
 
 ### ☁️ Custom AWS

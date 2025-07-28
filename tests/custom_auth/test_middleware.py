@@ -7,8 +7,10 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 from starlette.responses import JSONResponse
 from starlette.middleware import Middleware
+from fastapi import FastAPI, Depends
+from fastapi.testclient import TestClient as FastAPITestClient
 
-from custom_auth.middleware import APIKeyAuthMiddleware, create_authentication_middleware
+from custom_auth.middleware import APIKeyAuthMiddleware, create_authentication_middleware, create_api_key_verifier
 
 
 class TestAPIKeyAuthMiddleware:
@@ -214,3 +216,218 @@ class TestCreateAuthenticationMiddleware:
         response = client.get("/data", headers={"X-API-Key": api_key})
         assert response.status_code == 200
         assert response.json() == {"data": "sensitive"}
+
+
+class TestCreateAPIKeyVerifier:
+    """Tests para create_api_key_verifier"""
+    
+    @pytest.fixture
+    def api_key(self):
+        """API key de prueba."""
+        return "test-verifier-key-67890"
+    
+    @pytest.fixture
+    def fastapi_app_with_verifier(self, api_key):
+        """Aplicación FastAPI con verificador de API key."""
+        app = FastAPI()
+        verify_api_key = create_api_key_verifier(api_key)
+        
+        @app.get("/public")
+        async def public_endpoint():
+            return {"message": "Public endpoint"}
+        
+        @app.get("/protected")
+        async def protected_endpoint(api_key_verified: None = Depends(verify_api_key)):
+            return {"message": "Protected endpoint"}
+        
+        @app.post("/users")
+        async def create_user(
+            user_data: dict,
+            api_key_verified: None = Depends(verify_api_key)
+        ):
+            return {"user_id": "123", "data": user_data}
+        
+        return FastAPITestClient(app)
+    
+    @pytest.mark.unit
+    def test_verifier_creation(self, api_key):
+        """Test que el verificador se crea correctamente."""
+        verifier = create_api_key_verifier(api_key)
+        assert verifier is not None
+        assert callable(verifier)
+    
+    @pytest.mark.unit
+    def test_public_endpoint_without_api_key(self, fastapi_app_with_verifier):
+        """Test que los endpoints públicos funcionan sin API key."""
+        response = fastapi_app_with_verifier.get("/public")
+        assert response.status_code == 200
+        assert response.json() == {"message": "Public endpoint"}
+    
+    @pytest.mark.unit
+    def test_protected_endpoint_without_api_key(self, fastapi_app_with_verifier):
+        """Test que los endpoints protegidos devuelven 401 sin API key."""
+        response = fastapi_app_with_verifier.get("/protected")
+        assert response.status_code == 401
+        assert "API key required" in response.json()["detail"]
+    
+    @pytest.mark.unit
+    def test_protected_endpoint_with_invalid_api_key(self, fastapi_app_with_verifier):
+        """Test que una API key inválida devuelve 403."""
+        response = fastapi_app_with_verifier.get(
+            "/protected",
+            headers={"X-Api-Key": "invalid-key"}
+        )
+        assert response.status_code == 403
+        assert response.json()["detail"] == "Invalid API Key"
+    
+    @pytest.mark.unit
+    def test_authentication_via_bearer_token(self, fastapi_app_with_verifier, api_key):
+        """Test autenticación exitosa con Bearer token."""
+        response = fastapi_app_with_verifier.get(
+            "/protected",
+            headers={"Authorization": f"Bearer {api_key}"}
+        )
+        assert response.status_code == 200
+        assert response.json() == {"message": "Protected endpoint"}
+    
+    @pytest.mark.unit
+    def test_authentication_via_x_api_key_header(self, fastapi_app_with_verifier, api_key):
+        """Test autenticación exitosa con header X-Api-Key."""
+        response = fastapi_app_with_verifier.get(
+            "/protected",
+            headers={"X-Api-Key": api_key}
+        )
+        assert response.status_code == 200
+        assert response.json() == {"message": "Protected endpoint"}
+    
+    @pytest.mark.unit
+    def test_authentication_via_query_parameter(self, fastapi_app_with_verifier, api_key):
+        """Test autenticación exitosa con query parameter."""
+        response = fastapi_app_with_verifier.get(f"/protected?api_key={api_key}")
+        assert response.status_code == 200
+        assert response.json() == {"message": "Protected endpoint"}
+    
+    @pytest.mark.unit
+    def test_post_endpoint_with_authentication(self, fastapi_app_with_verifier, api_key):
+        """Test endpoint POST con autenticación."""
+        user_data = {"name": "John Doe", "email": "john@example.com"}
+        response = fastapi_app_with_verifier.post(
+            "/users",
+            json=user_data,
+            headers={"X-Api-Key": api_key}
+        )
+        assert response.status_code == 200
+        assert response.json()["user_id"] == "123"
+        assert response.json()["data"] == user_data
+    
+    @pytest.mark.unit
+    def test_authentication_priority_bearer_over_x_api_key(self, fastapi_app_with_verifier, api_key):
+        """Test que Bearer token tiene prioridad sobre X-Api-Key."""
+        response = fastapi_app_with_verifier.get(
+            "/protected",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "X-Api-Key": "wrong-key"
+            }
+        )
+        assert response.status_code == 200
+    
+    @pytest.mark.unit
+    def test_authentication_priority_x_api_key_over_query(self, fastapi_app_with_verifier, api_key):
+        """Test que X-Api-Key tiene prioridad sobre query parameter."""
+        response = fastapi_app_with_verifier.get(
+            "/protected?api_key=wrong-key",
+            headers={"X-Api-Key": api_key}
+        )
+        assert response.status_code == 200
+    
+    @pytest.mark.unit
+    def test_case_insensitive_x_api_key_header(self, fastapi_app_with_verifier, api_key):
+        """Test que el header X-Api-Key es case-insensitive."""
+        # FastAPI normaliza los headers a minúsculas internamente
+        response = fastapi_app_with_verifier.get(
+            "/protected",
+            headers={"x-api-key": api_key}
+        )
+        assert response.status_code == 200
+    
+    @pytest.mark.integration
+    def test_multiple_verifiers_with_different_keys(self):
+        """Test usando múltiples verificadores con diferentes API keys."""
+        admin_key = "admin-key-12345"
+        user_key = "user-key-67890"
+        
+        app = FastAPI()
+        verify_admin = create_api_key_verifier(admin_key)
+        verify_user = create_api_key_verifier(user_key)
+        
+        @app.delete("/users/{user_id}")
+        async def delete_user(
+            user_id: str,
+            admin_verified: None = Depends(verify_admin)
+        ):
+            return {"deleted": user_id}
+        
+        @app.get("/users")
+        async def list_users(
+            user_verified: None = Depends(verify_user)
+        ):
+            return {"users": ["user1", "user2"]}
+        
+        client = FastAPITestClient(app)
+        
+        # Admin endpoint con user key - debe fallar
+        response = client.delete("/users/123", headers={"X-Api-Key": user_key})
+        assert response.status_code == 403
+        
+        # Admin endpoint con admin key - debe funcionar
+        response = client.delete("/users/123", headers={"X-Api-Key": admin_key})
+        assert response.status_code == 200
+        assert response.json() == {"deleted": "123"}
+        
+        # User endpoint con user key - debe funcionar
+        response = client.get("/users", headers={"X-Api-Key": user_key})
+        assert response.status_code == 200
+        assert response.json() == {"users": ["user1", "user2"]}
+    
+    @pytest.mark.integration
+    def test_verifier_with_router(self, api_key):
+        """Test usando verificador con un router completo."""
+        from fastapi import APIRouter
+        
+        app = FastAPI()
+        verify_api_key = create_api_key_verifier(api_key)
+        
+        # Router protegido
+        protected_router = APIRouter(dependencies=[Depends(verify_api_key)])
+        
+        @protected_router.get("/items")
+        async def get_items():
+            return {"items": ["item1", "item2"]}
+        
+        @protected_router.post("/items")
+        async def create_item(item: dict):
+            return {"created": item}
+        
+        app.include_router(protected_router, prefix="/api/v1")
+        
+        client = FastAPITestClient(app)
+        
+        # Sin API key - debe fallar
+        response = client.get("/api/v1/items")
+        assert response.status_code == 401
+        
+        # Con API key - debe funcionar
+        response = client.get("/api/v1/items", headers={"X-Api-Key": api_key})
+        assert response.status_code == 200
+        assert response.json() == {"items": ["item1", "item2"]}
+        
+        # POST con API key
+        item_data = {"name": "New Item", "price": 99.99}
+        response = client.post(
+            "/api/v1/items",
+            json=item_data,
+            headers={"X-Api-Key": api_key}
+        )
+        assert response.status_code == 200
+        assert response.json() == {"created": item_data}
