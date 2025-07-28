@@ -1,5 +1,5 @@
 """
-Tests para el módulo auth.middleware
+Tests para el módulo custom_auth.middleware
 """
 
 import pytest
@@ -8,7 +8,7 @@ from starlette.testclient import TestClient
 from starlette.responses import JSONResponse
 from starlette.middleware import Middleware
 
-from auth.middleware import APIKeyAuthMiddleware, create_authentication_middleware
+from custom_auth.middleware import APIKeyAuthMiddleware, create_authentication_middleware
 
 
 class TestAPIKeyAuthMiddleware:
@@ -22,7 +22,25 @@ class TestAPIKeyAuthMiddleware:
     @pytest.fixture
     def app_with_middleware(self, api_key):
         """Aplicación Starlette con middleware de autenticación."""
+        from starlette.routing import Route
+        
+        async def homepage(request):
+            return JSONResponse({"message": "Home page"})
+        
+        async def health(request):
+            return JSONResponse({"status": "healthy"})
+        
+        async def protected(request):
+            return JSONResponse({"message": "Protected resource"})
+        
+        routes = [
+            Route("/", endpoint=homepage),
+            Route("/health", endpoint=health),
+            Route("/protected", endpoint=protected),
+        ]
+        
         app = Starlette(
+            routes=routes,
             middleware=[
                 Middleware(
                     APIKeyAuthMiddleware,
@@ -31,18 +49,6 @@ class TestAPIKeyAuthMiddleware:
                 )
             ]
         )
-        
-        @app.route("/")
-        async def homepage(request):
-            return JSONResponse({"message": "Home page"})
-        
-        @app.route("/health")
-        async def health(request):
-            return JSONResponse({"status": "healthy"})
-        
-        @app.route("/protected")
-        async def protected(request):
-            return JSONResponse({"message": "Protected resource"})
         
         return TestClient(app)
     
@@ -184,14 +190,19 @@ class TestCreateAuthenticationMiddleware:
     @pytest.mark.integration
     def test_middleware_integration_with_app(self):
         """Test integración completa del middleware con una aplicación."""
+        from starlette.routing import Route
+        
         api_key = "integration-test-key"
         
-        middleware = create_authentication_middleware(api_key=api_key)
-        app = Starlette(middleware=middleware)
-        
-        @app.route("/data")
         async def get_data(request):
             return JSONResponse({"data": "sensitive"})
+        
+        routes = [
+            Route("/data", endpoint=get_data),
+        ]
+        
+        middleware = create_authentication_middleware(api_key=api_key)
+        app = Starlette(routes=routes, middleware=middleware)
         
         client = TestClient(app)
         

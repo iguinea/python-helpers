@@ -55,20 +55,25 @@ def mock_secrets_manager(mock_aws_credentials):
 @pytest.fixture
 def starlette_app():
     """Crea una aplicación Starlette básica para pruebas."""
-    app = Starlette()
+    from starlette.routing import Route
+    from starlette.responses import JSONResponse
     
-    @app.route("/")
     async def homepage(request):
-        return {"message": "Hello, World!"}
+        return JSONResponse({"message": "Hello, World!"})
     
-    @app.route("/health")
     async def health(request):
-        return {"status": "healthy"}
+        return JSONResponse({"status": "healthy"})
     
-    @app.route("/protected")
     async def protected(request):
-        return {"message": "Protected resource"}
+        return JSONResponse({"message": "Protected resource"})
     
+    routes = [
+        Route("/", endpoint=homepage),
+        Route("/health", endpoint=health),
+        Route("/protected", endpoint=protected),
+    ]
+    
+    app = Starlette(routes=routes)
     return app
 
 
@@ -78,47 +83,6 @@ def test_client(starlette_app):
     return TestClient(starlette_app)
 
 
-@pytest.fixture
-def sample_json_schema():
-    """Esquema JSON de ejemplo para pruebas de validación."""
-    return {
-        "type": "object",
-        "required": ["name", "age"],
-        "properties": {
-            "name": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 100
-            },
-            "age": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 150
-            },
-            "email": {
-                "type": "string",
-                "pattern": r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-            },
-            "tags": {
-                "type": "array",
-                "items": {"type": "string"},
-                "minItems": 0,
-                "maxItems": 10
-            }
-        },
-        "additionalProperties": False
-    }
-
-
-@pytest.fixture
-def valid_test_data():
-    """Datos de prueba válidos para validación."""
-    return {
-        "name": "Juan Pérez",
-        "age": 30,
-        "email": "juan@example.com",
-        "tags": ["python", "testing"]
-    }
 
 
 # Marcadores personalizados

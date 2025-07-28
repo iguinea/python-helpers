@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python-helpers"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python helpers for the workspace"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -30,7 +30,7 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["auth", "aws", "common"]
+include = ["custom_auth", "custom_aws"]
 exclude = ["tests*"]
 
 [tool.pytest.ini_options]

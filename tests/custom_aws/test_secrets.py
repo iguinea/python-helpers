@@ -1,5 +1,5 @@
 """
-Tests para el módulo aws.secrets
+Tests para el módulo custom_aws.secrets
 """
 
 import json
@@ -7,11 +7,11 @@ import pytest
 from unittest.mock import patch, MagicMock
 from botocore.exceptions import ClientError, NoCredentialsError
 
-from aws.secrets import (
+from custom_aws.secrets import (
     _get_secret_value,
     parse_secret_json,
     get_secret_fields,
-    test_secrets_manager_connection
+    check_secrets_manager_connection
 )
 
 
@@ -273,12 +273,12 @@ class TestGetSecretFields:
 
 
 class TestSecretsManagerConnection:
-    """Tests para test_secrets_manager_connection"""
+    """Tests para check_secrets_manager_connection"""
     
     @pytest.mark.unit
     def test_connection_success(self, mock_secrets_manager):
         """Test conexión exitosa."""
-        result = test_secrets_manager_connection()
+        result = check_secrets_manager_connection()
         assert result is True
     
     @pytest.mark.unit
@@ -287,7 +287,7 @@ class TestSecretsManagerConnection:
         with patch('boto3.Session') as mock_session:
             mock_session.side_effect = Exception("Connection error")
             
-            result = test_secrets_manager_connection()
+            result = check_secrets_manager_connection()
             assert result is False
     
     @pytest.mark.unit
@@ -297,7 +297,7 @@ class TestSecretsManagerConnection:
             mock_client = MagicMock()
             mock_session.return_value.client.return_value = mock_client
             
-            result = test_secrets_manager_connection(region_name="ap-southeast-1")
+            result = check_secrets_manager_connection(region_name="ap-southeast-1")
             
             # Verificar que se usó la región correcta
             mock_session.return_value.client.assert_called_with(

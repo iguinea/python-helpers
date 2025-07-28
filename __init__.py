@@ -5,11 +5,10 @@ Este paquete proporciona utilidades comunes para proyectos Python,
 incluyendo autenticación, manejo de secretos AWS, y más.
 """
 
-__version__ = "0.1.0"
-__author__ = "Tu equipo"
+__version__ = "0.1.1"
+__author__ = "Iñaki Guinea <iguinea@gmail.com>"
 
-from . import auth
-from . import aws
-from . import common
+from . import custom_auth
+from . import custom_aws
 
-__all__ = ["auth", "aws", "common"]
+__all__ = ["custom_auth", "custom_aws"]

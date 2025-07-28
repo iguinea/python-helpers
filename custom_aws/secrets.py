@@ -197,7 +197,7 @@ def get_secret_fields(
 
 
 # Convenience function for quick testing
-def test_secrets_manager_connection(region_name: Optional[str] = None) -> bool:
+def check_secrets_manager_connection(region_name: Optional[str] = None) -> bool:
     """
     Test if AWS Secrets Manager is accessible.
 

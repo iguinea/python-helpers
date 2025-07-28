@@ -53,20 +53,16 @@ test-coverage-html: test-coverage ## Ejecuta tests con cobertura y abre el repor
 	@echo "$(GREEN)Abriendo reporte de cobertura...$(NC)"
 	@python -m webbrowser htmlcov/index.html
 
-.PHONY: test-auth
-test-auth: ## Ejecuta tests del módulo auth
-	@echo "$(GREEN)Ejecutando tests de auth...$(NC)"
-	$(PYTEST) -v tests/auth/
+.PHONY: test-custom-auth
+test-custom-auth: ## Ejecuta tests del módulo custom_auth
+	@echo "$(GREEN)Ejecutando tests de custom_auth...$(NC)"
+	$(PYTEST) -v tests/custom_auth/
 
-.PHONY: test-aws
-test-aws: ## Ejecuta tests del módulo aws
-	@echo "$(GREEN)Ejecutando tests de aws...$(NC)"
-	$(PYTEST) -v tests/aws/
+.PHONY: test-custom-aws
+test-custom-aws: ## Ejecuta tests del módulo custom_aws
+	@echo "$(GREEN)Ejecutando tests de custom_aws...$(NC)"
+	$(PYTEST) -v tests/custom_aws/
 
-.PHONY: test-common
-test-common: ## Ejecuta tests del módulo common
-	@echo "$(GREEN)Ejecutando tests de common...$(NC)"
-	$(PYTEST) -v tests/common/
 
 .PHONY: test-watch
 test-watch: ## Ejecuta tests en modo watch (requiere pytest-watch)
