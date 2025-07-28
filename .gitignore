@@ -5,6 +5,18 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
 
 # Virtual environments
 .venv
+
+.DS_Store
+.devcontainer/
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+
+.coverage
+dist/
+htmlcov/
+coverage.xml
