@@ -19,7 +19,8 @@ python-helpers/
 ├── custom_auth/
 │   └── middleware.py      # Middleware de autenticación para APIs
 ├── custom_aws/
-│   └── secrets.py         # Utilidades para AWS Secrets Manager
+│   ├── secrets.py         # Utilidades para AWS Secrets Manager
+│   └── sqs.py             # Utilidades para Amazon SQS
 ├── pyproject.toml         # Configuración del proyecto
 └── README.md             # Este archivo
 ```
@@ -49,6 +50,7 @@ async def protected_endpoint(verified: None = Depends(verify_api_key)):
 ```
 
 ### ☁️ Custom AWS
+#### AWS Secrets Manager
 **`custom_aws.secrets`** - Utilidades para trabajar con AWS Secrets Manager
 
 ```python
@@ -60,6 +62,26 @@ config = get_secret_fields(
     fields=["api_key", "endpoint"],
     region_name="eu-west-1"
 )
+```
+
+#### Amazon SQS
+**`custom_aws.sqs`** - Utilidades para enviar y recibir mensajes en colas SQS
+
+```python
+from custom_aws.sqs import send_message, receive_messages, delete_message
+
+# Enviar un mensaje
+response = send_message(
+    "https://sqs.eu-west-1.amazonaws.com/123456789/mi-cola",
+    {"tipo": "pedido", "id": 123}
+)
+
+# Recibir y procesar mensajes
+messages = receive_messages("queue_url", max_messages=10)
+for msg in messages:
+    print(f"Procesando: {msg['Body']}")
+    # Eliminar mensaje después de procesar
+    delete_message("queue_url", msg['ReceiptHandle'])
 ```
 
 

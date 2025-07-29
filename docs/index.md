@@ -13,11 +13,11 @@ Middleware de autenticación por API key para aplicaciones Starlette/FastAPI.
 - Fácil integración con frameworks web
 
 ### ☁️ [Custom AWS](custom_aws.md)
-Utilidades para servicios AWS, especialmente AWS Secrets Manager.
+Utilidades para servicios AWS, incluyendo Secrets Manager y SQS.
 
 **Características principales:**
-- Recuperación segura de secretos
-- Parsing automático de JSON
+- **Secrets Manager**: Recuperación segura de secretos, parsing automático de JSON
+- **[SQS](custom_aws_sqs.md)**: Envío y recepción de mensajes, manejo de colas
 - Manejo robusto de errores AWS
 - Validación de campos requeridos
 
@@ -46,6 +46,12 @@ middleware = create_authentication_middleware(api_key="secret-key")
 from custom_aws.secrets import get_secret_fields
 
 config = get_secret_fields("myapp/config", ["api_key", "endpoint"])
+
+# AWS SQS
+from custom_aws.sqs import send_message, receive_messages
+
+send_message("https://sqs.region.amazonaws.com/123/queue", "Hola!")
+messages = receive_messages("https://sqs.region.amazonaws.com/123/queue")
 ```
 
 ## 📖 Guías de Uso
