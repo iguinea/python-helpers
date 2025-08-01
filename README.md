@@ -20,7 +20,8 @@ python-helpers/
 │   └── middleware.py      # Middleware de autenticación para APIs
 ├── custom_aws/
 │   ├── secrets.py         # Utilidades para AWS Secrets Manager
-│   └── sqs.py             # Utilidades para Amazon SQS
+│   ├── sqs.py             # Utilidades para Amazon SQS
+│   └── sns.py             # Utilidades para Amazon SNS
 ├── pyproject.toml         # Configuración del proyecto
 └── README.md             # Este archivo
 ```
@@ -82,6 +83,33 @@ for msg in messages:
     print(f"Procesando: {msg['Body']}")
     # Eliminar mensaje después de procesar
     delete_message("queue_url", msg['ReceiptHandle'])
+```
+
+#### Amazon SNS
+**`custom_aws.sns`** - Utilidades para publicar notificaciones y gestionar suscripciones SNS
+
+```python
+from custom_aws.sns import publish_message, subscribe, list_subscriptions_by_topic
+
+# Publicar un mensaje a un tópico
+response = publish_message(
+    topic_arn="arn:aws:sns:eu-west-1:123456789:alertas",
+    message="Notificación importante",
+    subject="Alerta del sistema"
+)
+
+# Enviar SMS directo
+publish_message(
+    phone_number="+34600123456",
+    message="Tu código de verificación es: 1234"
+)
+
+# Suscribir un email al tópico
+subscribe(
+    topic_arn="arn:aws:sns:eu-west-1:123456789:alertas",
+    protocol="email",
+    endpoint="usuario@ejemplo.com"
+)
 ```
 
 

@@ -13,8 +13,6 @@ wheels/
 .DS_Store
 .devcontainer/
 .claude/
-CLAUDE.md
-CLAUDE.local.md
 
 .coverage
 dist/

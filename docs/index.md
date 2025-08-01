@@ -18,6 +18,7 @@ Utilidades para servicios AWS, incluyendo Secrets Manager y SQS.
 **Características principales:**
 - **Secrets Manager**: Recuperación segura de secretos, parsing automático de JSON
 - **[SQS](custom_aws_sqs.md)**: Envío y recepción de mensajes, manejo de colas
+- **[SNS](custom_aws_sns.md)**: Publicación de notificaciones, gestión de suscripciones
 - Manejo robusto de errores AWS
 - Validación de campos requeridos
 
@@ -52,6 +53,12 @@ from custom_aws.sqs import send_message, receive_messages
 
 send_message("https://sqs.region.amazonaws.com/123/queue", "Hola!")
 messages = receive_messages("https://sqs.region.amazonaws.com/123/queue")
+
+# AWS SNS
+from custom_aws.sns import publish_message, subscribe
+
+publish_message("arn:aws:sns:region:123456789:topic", "Notificación")
+subscribe("arn:aws:sns:region:123456789:topic", "email", "user@example.com")
 ```
 
 ## 📖 Guías de Uso

@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-El módulo `custom_aws` proporciona utilidades para interactuar con servicios de AWS, incluyendo AWS Secrets Manager y Amazon SQS. Facilita la recuperación segura de credenciales, configuraciones almacenadas en la nube y el manejo de mensajes en colas.
+El módulo `custom_aws` proporciona utilidades para interactuar con servicios de AWS, incluyendo AWS Secrets Manager, Amazon SQS y Amazon SNS. Facilita la recuperación segura de credenciales, configuraciones almacenadas en la nube, el manejo de mensajes en colas y la publicación de notificaciones.
 
 ## Instalación
 
@@ -12,6 +12,9 @@ from custom_aws.secrets import get_secret_fields, parse_secret_json, check_secre
 
 # Amazon SQS
 from custom_aws.sqs import send_message, receive_messages, delete_message
+
+# Amazon SNS
+from custom_aws.sns import publish_message, subscribe, unsubscribe
 ```
 
 ## Servicios Disponibles
@@ -23,6 +26,10 @@ Para gestión segura de credenciales y configuraciones. [Ver documentación comp
 ### Amazon SQS
 
 Para manejo de mensajes en colas. [Ver documentación completa de SQS](./custom_aws_sqs.md)
+
+### Amazon SNS
+
+Para publicación de notificaciones y gestión de suscripciones. [Ver documentación completa de SNS](./custom_aws_sns.md)
 
 ## AWS Secrets Manager
 
