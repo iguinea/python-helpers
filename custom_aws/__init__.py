@@ -33,6 +33,17 @@ from .sns import (
     check_sns_connection,
 )
 
+from .credentials import (
+    CredentialProvider,
+    AWSCredentials,
+    get_boto3_session,
+    get_client_with_credentials,
+    get_credentials_from_secret,
+    assume_role_session,
+    get_credentials_provider,
+    validate_credentials,
+)
+
 __all__ = [
     # Secrets Manager
     "get_secret_fields",
@@ -57,4 +68,13 @@ __all__ = [
     "set_subscription_attributes",
     "confirm_subscription",
     "check_sns_connection",
+    # Credentials
+    "CredentialProvider",
+    "AWSCredentials",
+    "get_boto3_session",
+    "get_client_with_credentials",
+    "get_credentials_from_secret",
+    "assume_role_session",
+    "get_credentials_provider",
+    "validate_credentials",
 ]

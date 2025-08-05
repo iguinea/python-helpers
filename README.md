@@ -51,6 +51,24 @@ async def protected_endpoint(verified: None = Depends(verify_api_key)):
 ```
 
 ### ☁️ Custom AWS
+#### AWS Credentials
+**`custom_aws.credentials`** - Gestión flexible de credenciales AWS con múltiples proveedores
+
+```python
+from custom_aws.credentials import get_boto3_session, CredentialProvider
+
+# Usar diferentes proveedores de credenciales
+session = get_boto3_session(provider=CredentialProvider.ENVIRONMENT)
+s3 = session.client('s3')
+
+# AssumeRole
+session = get_boto3_session(
+    provider=CredentialProvider.ASSUME_ROLE,
+    role_arn="arn:aws:iam::123456789012:role/MyRole",
+    role_session_name="mi-sesion"
+)
+```
+
 #### AWS Secrets Manager
 **`custom_aws.secrets`** - Utilidades para trabajar con AWS Secrets Manager
 

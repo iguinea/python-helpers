@@ -5,7 +5,7 @@ Este paquete proporciona utilidades comunes para proyectos Python,
 incluyendo autenticación, manejo de secretos AWS, y más.
 """
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 __author__ = "Iñaki Guinea <iguinea@gmail.com>"
 
 from . import custom_auth

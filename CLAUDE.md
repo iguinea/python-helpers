@@ -54,9 +54,11 @@ The project is organized into independent modules, each serving a specific purpo
   - Includes `create_api_key_verifier()` for FastAPI dependency-based authentication
 
 - **custom_aws/**: AWS service utilities  
+  - `credentials.py`: Flexible AWS credentials management with multiple providers
   - `secrets.py`: AWS Secrets Manager integration
   - `sqs.py`: Amazon SQS message queue utilities
   - `sns.py`: Amazon SNS notification service utilities
+  - Provides `get_boto3_session()`, `assume_role_session()`, `validate_credentials()` for credential management
   - Provides `get_secret_fields()` for retrieving specific fields from JSON secrets
   - Provides `send_message()`, `receive_messages()`, `delete_message()` for SQS operations
   - Provides `publish_message()`, `subscribe()`, `unsubscribe()` for SNS operations
@@ -77,6 +79,7 @@ Comprehensive documentation is available in the `/docs` directory:
 - `docs/index.md` - Main documentation index
 - `docs/custom_auth.md` - Authentication middleware documentation
 - `docs/custom_aws.md` - AWS utilities documentation
+- `docs/custom_aws_credentials.md` - AWS credentials management documentation
 - `docs/custom_aws_sns.md` - Amazon SNS utilities documentation
 - `docs/custom_aws_sqs.md` - Amazon SQS utilities documentation
 
