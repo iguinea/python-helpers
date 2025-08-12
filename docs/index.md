@@ -4,13 +4,30 @@ Bienvenido a la documentación de Python Helpers, una colección de utilidades r
 
 ## 📚 Módulos Disponibles
 
-### 🔐 [Custom Auth](custom_auth.md)
+### 🔐 Autenticación
+
+#### [Custom Auth](custom_auth.md)
 Middleware de autenticación por API key para aplicaciones Starlette/FastAPI.
 
 **Características principales:**
 - Múltiples métodos de autenticación (Bearer, X-API-Key, query parameter)
 - Rutas públicas configurables
 - Fácil integración con frameworks web
+
+#### [Custom Cognito](custom_cognito.md)
+Autenticación completa con AWS Cognito para aplicaciones FastAPI.
+
+**Características principales:**
+- Registro de usuarios con verificación por email
+- Login con tokens JWT (access token y refresh token)
+- Multi-Factor Authentication (MFA)
+- Recuperación de contraseña
+- Validación de tokens contra JWKS de Cognito
+- Endpoints REST listos para usar
+
+**📖 Documentación adicional:**
+- [**Guía de Snippets**](custom_cognito_snippets.md) - Ejemplos de código para todas las funciones
+- [**Cookbook**](custom_cognito_cookbook.md) - Recetas completas y casos de uso avanzados
 
 ### ☁️ [Custom AWS](custom_aws.md)
 Utilidades para servicios AWS, incluyendo gestión de credenciales, Secrets Manager, SQS y SNS.
@@ -39,10 +56,18 @@ uv pip install -e .
 ### Ejemplo Básico
 
 ```python
-# Autenticación
+# Autenticación con API Key
 from custom_auth.middleware import create_authentication_middleware
 
 middleware = create_authentication_middleware(api_key="secret-key")
+
+# Autenticación con AWS Cognito
+from custom_cognito import CognitoService, get_current_user
+from fastapi import Depends
+
+@app.get("/protected")
+async def protected_route(user = Depends(get_current_user)):
+    return {"user": user}
 
 # AWS Credentials
 from custom_aws.credentials import get_boto3_session, CredentialProvider
@@ -112,6 +137,8 @@ Ejecutar tests de un módulo específico:
 ```bash
 make test-custom-auth
 make test-custom-aws
+# Para custom_cognito:
+cd custom_cognito && pytest
 ```
 
 ## 🤝 Contribuir

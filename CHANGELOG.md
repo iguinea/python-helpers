@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2025-08-12
+
+### Added
+- AWS Cognito authentication module (`custom_cognito`) for FastAPI applications
+  - Complete authentication flow: registration, email verification, login, logout
+  - JWT token validation against AWS Cognito JWKS
+  - Multi-Factor Authentication (MFA) support
+  - Password reset functionality
+  - FastAPI endpoints ready to use
+  - Comprehensive test suite with moto mocking
+  - Detailed documentation (`docs/custom_cognito.md`)
+  - Pydantic schemas for request/response validation
+  - Lazy initialization for better testing support
+- Cognito management tools in `tools/cognito/` directory
+  - Interactive user lifecycle testing
+  - User management scripts (list, disable, delete)
+  - Demo and testing utilities
+- Comprehensive Python code snippets documentation (`docs/custom_cognito_snippets.md`)
+- Advanced recipes and cookbook (`docs/custom_cognito_cookbook.md`)
+
+### Changed
+- Updated `pyproject.toml` to include `custom_cognito` module
+- Enhanced documentation structure to separate authentication modules
+- Fixed pycognito authentication to properly handle token attributes instead of return values
+- Improved username handling for email alias configurations
+
+### Fixed
+- Cognito login method now correctly accesses tokens from pycognito object attributes
+- Added proper handling for missing `expires_in` attribute in token response
+- Fixed username vs email confusion when using Cognito email aliases
+
+## [0.1.6] - 2025-08-01
+
+### Added
+- AWS credentials management utilities (`custom_aws.credentials`)
+  - Multiple credential providers: Direct, AssumeRole, Secrets Manager, Environment, Instance Profile
+  - `get_boto3_session()` - Flexible session creation with different providers
+  - `assume_role_session()` - Simplified AssumeRole functionality
+  - `validate_credentials()` - Verify AWS credentials are valid
+  - `get_credentials_from_secret()` - Retrieve credentials from Secrets Manager
+  - Support for credential caching and refresh
+- Comprehensive credentials documentation (`docs/custom_aws_credentials.md`)
+- Full test coverage for credentials module
+
+### Changed
+- Enhanced AWS utilities with centralized credential management
+- Updated documentation with credential management best practices
+
 ## [0.1.5] - 2025-08-01
 
 ### Added
@@ -90,7 +138,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation framework
 - Spanish language support for documentation and comments
 
-[Unreleased]: https://github.com/tu-usuario/python-helpers/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/tu-usuario/python-helpers/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/tu-usuario/python-helpers/compare/v0.1.6...v0.1.7
+[0.1.6]: https://github.com/tu-usuario/python-helpers/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/tu-usuario/python-helpers/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/tu-usuario/python-helpers/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/tu-usuario/python-helpers/compare/v0.1.2...v0.1.3

@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "awslabs_core-mcp-server": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "awslabs.core-mcp-server@latest"
+      ],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
+    "awslabs_aws-api-mcp-server": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "awslabs.aws-api-mcp-server@latest"
+      ],
+      "env": {
+        "AWS_DEFAULT_REGION": "eu-west-1",
+        "AWS_REGION": "eu-west-1",
+        "AWS_PROFILE": "agentic",
+        "AWS_API_MCP_WORKING_DIR": "/workspace_python-helpers",
+        "AWS_API_MCP_PROFILE_NAME": "agentic"
+      }
+    }
+  }
+}

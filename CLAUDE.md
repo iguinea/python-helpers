@@ -27,8 +27,20 @@ make test-coverage     # Run tests with coverage report
 make test-unit         # Run unit tests only
 make test-custom-auth  # Run custom_auth module tests
 make test-custom-aws   # Run custom_aws module tests (includes SQS and SNS tests)
+make test-custom-cognito  # Run custom_cognito module tests (with mocks)
 make check             # Run lint, type-check and tests
 make clean             # Clean temporary files
+
+# Test utilities for Cognito (located in tools/cognito/)
+make cognito-list-users       # List all users in Cognito User Pool
+make cognito-disable-users    # Disable all users (requires confirmation)
+make cognito-delete-users     # Delete all users (requires confirmation)
+make cognito-test-interactive # Interactive test for user registration/confirmation
+make cognito-test-demo        # Demo script for testing registration flow
+
+# Or run directly:
+python tools/cognito/list_cognito_users.py
+python tools/cognito/test_cognito_user_interactive.py
 
 # Manual commands (if not using make)
 uv pip install -e ".[dev]"  # Install dev dependencies
@@ -64,6 +76,16 @@ The project is organized into independent modules, each serving a specific purpo
   - Provides `publish_message()`, `subscribe()`, `unsubscribe()` for SNS operations
   - Includes robust error handling for AWS exceptions
 
+- **custom_cognito/**: AWS Cognito authentication for FastAPI
+  - `main.py`: FastAPI application with authentication endpoints
+  - `cognito_service.py`: Business logic for Cognito operations
+  - `auth.py`: JWT validation and authentication middleware
+  - `schemas.py`: Pydantic models for request/response validation
+  - `config.py`: Settings management with environment variables
+  - Provides complete authentication flow: register, verify, login, MFA, password reset
+  - JWT token validation against AWS Cognito JWKS
+  - Includes comprehensive test suite with moto mocking
+
 ### Design Patterns
 - Each module exposes its public API through `__init__.py` files
 - Error handling uses custom exception hierarchy based on `BaseError`
@@ -78,6 +100,7 @@ The project is organized into independent modules, each serving a specific purpo
 Comprehensive documentation is available in the `/docs` directory:
 - `docs/index.md` - Main documentation index
 - `docs/custom_auth.md` - Authentication middleware documentation
+- `docs/custom_cognito.md` - AWS Cognito authentication documentation
 - `docs/custom_aws.md` - AWS utilities documentation
 - `docs/custom_aws_credentials.md` - AWS credentials management documentation
 - `docs/custom_aws_sns.md` - Amazon SNS utilities documentation

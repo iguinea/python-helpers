@@ -1,0 +1,4 @@
+- Use SOLID principles in creating software
+- You are an expert Python developer
+- Use Python UV environment for this project
+- Update @CLAUDE.md and @README.md after changes if you think it is worthy

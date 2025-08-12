@@ -30,7 +30,9 @@ python-helpers/
 
 > 📖 **[Ver documentación completa](docs/index.md)** para guías detalladas de cada módulo.
 
-### 🔐 Custom Auth
+### 🔐 Autenticación
+
+#### Custom Auth
 **`custom_auth.middleware`** - Middleware de autenticación por API key para aplicaciones Starlette/FastAPI
 
 ```python
@@ -49,6 +51,47 @@ verify_api_key = create_api_key_verifier("tu-api-key-secreta")
 async def protected_endpoint(verified: None = Depends(verify_api_key)):
     return {"data": "sensitive"}
 ```
+
+#### Custom Cognito
+**`custom_cognito`** - Autenticación completa con AWS Cognito para FastAPI
+
+```python
+from custom_cognito import CognitoService, get_current_user
+from custom_cognito.schemas import UserRegister
+from fastapi import Depends
+
+# Configurar servicio
+cognito = CognitoService(settings)
+
+# Registrar usuario
+user_data = UserRegister(
+    email="user@example.com",
+    password="SecurePass123!",
+    full_name="Juan Pérez"
+)
+result = await cognito.register_user(user_data)
+# Retorna: {"user_sub": "...", "email": "...", "username": "...", "confirmation_required": True}
+
+# Confirmar email
+await cognito.confirm_email("user@example.com", "123456")
+
+# Login
+tokens = await cognito.login("user@example.com", "SecurePass123!")
+# Retorna: {"access_token": "...", "refresh_token": "...", "id_token": "...", "expires_in": 3600}
+
+# Proteger endpoints con JWT
+@app.get("/protected")
+async def protected_route(user = Depends(get_current_user)):
+    return {"message": f"Hola {user['email']}"}
+```
+
+**Características principales:**
+- Registro de usuarios con confirmación por email
+- Autenticación con usuario/contraseña
+- Validación de tokens JWT
+- Soporte para MFA (Multi-Factor Authentication)
+- Gestión de contraseñas (reset, cambio)
+- Integración completa con FastAPI
 
 ### ☁️ Custom AWS
 #### AWS Credentials
@@ -167,8 +210,15 @@ make test-coverage
 # Ejecutar tests específicos
 make test-unit          # Solo tests unitarios
 make test-integration   # Solo tests de integración
-make test-custom-auth   # Tests del módulo custom_auth
-make test-custom-aws    # Tests del módulo custom_aws
+make test-custom-auth         # Tests del módulo custom_auth
+make test-custom-aws          # Tests del módulo custom_aws
+make test-custom-cognito      # Tests del módulo custom_cognito (con mocks)
+make test-custom-cognito-real # Tests de integración real con AWS Cognito (requiere confirmación)
+
+# Herramientas de Cognito
+make cognito-list-users       # Listar usuarios en Cognito
+make cognito-test-interactive # Test interactivo de registro
+make cognito-test-demo        # Demo de registro
 
 # Otros comandos útiles
 make clean              # Limpiar archivos temporales
