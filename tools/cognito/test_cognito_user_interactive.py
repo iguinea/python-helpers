@@ -12,10 +12,17 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
-env_path = Path(__file__).parent / "custom_cognito" / ".env"
-load_dotenv(env_path)
+env_path = Path(__file__).parent.parent.parent / "custom_cognito" / ".env"
+print(f">env_path: {env_path}")
+loaded = load_dotenv(env_path)
+if not loaded:
+    print(f"No se pudo cargar el archivo .env en {env_path}")
+    sys.exit(1)
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add the workspace root to Python path so we can import custom_cognito
+workspace_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(workspace_root))
 
 from custom_cognito.cognito_service import CognitoService
 from custom_cognito.config import Settings
@@ -65,7 +72,7 @@ async def main():
     print(f"   Ingresa el código de 6 dígitos cuando lo recibas")
 
     confirmed = False
-    max_attempts = 10
+    max_attempts = 2
     code_used = set()  # Para rastrear códigos ya usados
 
     for attempt in range(1, max_attempts + 1):
@@ -96,10 +103,14 @@ async def main():
                 await asyncio.sleep(1)
 
                 # Verificar login
-                print(f"   Verificando login....-...")
-                await cognito_service.login(user_data.email, user_data.password)
+                print(f"   Verificando login...")
+                result = await cognito_service.login(
+                    user_data.email, user_data.password
+                )
                 confirmed = True
                 print(f"   ✓ Login exitoso!")
+                print(f"   - Result: {result}")
+
                 break
 
             except ValueError as e:

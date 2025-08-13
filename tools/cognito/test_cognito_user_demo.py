@@ -12,10 +12,17 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
-env_path = Path(__file__).parent / "custom_cognito" / ".env"
-load_dotenv(env_path)
+env_path = Path(__file__).parent.parent.parent / "custom_cognito" / ".env"
+print(f">env_path: {env_path}")
+loaded = load_dotenv(env_path)
+if not loaded:
+    print(f"No se pudo cargar el archivo .env en {env_path}")
+    sys.exit(1)
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add the workspace root to Python path so we can import custom_cognito
+workspace_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(workspace_root))
 
 from custom_cognito.cognito_service import CognitoService
 from custom_cognito.config import Settings
