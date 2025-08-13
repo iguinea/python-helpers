@@ -7,36 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.7] - 2025-08-12
-
-### Added
-- AWS Cognito authentication module (`custom_cognito`) for FastAPI applications
-  - Complete authentication flow: registration, email verification, login, logout
-  - JWT token validation against AWS Cognito JWKS
-  - Multi-Factor Authentication (MFA) support
-  - Password reset functionality
-  - FastAPI endpoints ready to use
-  - Comprehensive test suite with moto mocking
-  - Detailed documentation (`docs/custom_cognito.md`)
-  - Pydantic schemas for request/response validation
-  - Lazy initialization for better testing support
-- Cognito management tools in `tools/cognito/` directory
-  - Interactive user lifecycle testing
-  - User management scripts (list, disable, delete)
-  - Demo and testing utilities
-- Comprehensive Python code snippets documentation (`docs/custom_cognito_snippets.md`)
-- Advanced recipes and cookbook (`docs/custom_cognito_cookbook.md`)
-
-### Changed
-- Updated `pyproject.toml` to include `custom_cognito` module
-- Enhanced documentation structure to separate authentication modules
-- Fixed pycognito authentication to properly handle token attributes instead of return values
-- Improved username handling for email alias configurations
-
-### Fixed
-- Cognito login method now correctly accesses tokens from pycognito object attributes
-- Added proper handling for missing `expires_in` attribute in token response
-- Fixed username vs email confusion when using Cognito email aliases
 
 ## [0.1.6] - 2025-08-01
 

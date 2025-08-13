@@ -63,56 +63,6 @@ test-custom-aws: ## Ejecuta tests del módulo custom_aws
 	@echo "$(GREEN)Ejecutando tests de custom_aws...$(NC)"
 	$(PYTEST) -v tests/custom_aws/
 
-.PHONY: test-custom-cognito
-test-custom-cognito: ## Ejecuta tests del módulo custom_cognito
-	@echo "$(GREEN)Ejecutando tests de custom_cognito...$(NC)"
-	$(PYTEST) -v tests/custom_cognito/
-	@echo "$(GREEN)Ejecutando tests internos de custom_cognito...$(NC)"
-	cd custom_cognito && $(PYTHON) -m pytest tests/ -v
-
-.PHONY: test-custom-cognito-real
-test-custom-cognito-real: ## Ejecuta tests de integración real con AWS Cognito (requiere credenciales)
-	@echo "$(YELLOW)⚠️  ADVERTENCIA: Estos tests crearán usuarios reales en tu User Pool de Cognito$(NC)"
-	@echo "$(YELLOW)Solo ejecuta estos tests contra un User Pool de desarrollo/testing$(NC)"
-	@echo "$(GREEN)Ejecutando tests de integración real con AWS Cognito...$(NC)"
-	cd custom_cognito && $(PYTHON) -m pytest -m integration_real tests/ -v
-
-.PHONY: test-custom-cognito-real-delete-users
-test-custom-cognito-real-delete-users: ## Ejecuta tests de integración real con AWS Cognito (requiere credenciales)
-	@echo "$(YELLOW)⚠️  ADVERTENCIA: Estos tests eliminarán usuarios reales en tu User Pool de Cognito$(NC)"
-	@echo "$(YELLOW)Solo ejecuta estos tests contra un User Pool de desarrollo/testing$(NC)"
-	@echo "$(GREEN)Ejecutando tests de integración real con AWS Cognito...$(NC)"
-	python -m pytest tests/custom_cognito/test_user_lifecycle.py -v -s
-
-# Herramientas de Cognito
-.PHONY: cognito-list-users
-cognito-list-users: ## Lista todos los usuarios en Cognito
-	@echo "$(GREEN)Listando usuarios de Cognito...$(NC)"
-	$(PYTHON) tools/cognito/list_cognito_users.py
-
-.PHONY: cognito-disable-users
-cognito-disable-users: ## Desactiva todos los usuarios en Cognito (requiere confirmación)
-	@echo "$(RED)⚠️  ADVERTENCIA: Esto desactivará TODOS los usuarios en Cognito$(NC)"
-	@echo "$(GREEN)Ejecutando desactivación de usuarios...$(NC)"
-	$(PYTHON) tools/cognito/disable_cognito_users.py
-
-.PHONY: cognito-delete-users
-cognito-delete-users: ## Elimina todos los usuarios en Cognito (requiere confirmación)
-	@echo "$(RED)⚠️  ADVERTENCIA: Esto eliminará PERMANENTEMENTE todos los usuarios en Cognito$(NC)"
-	@echo "$(GREEN)Ejecutando eliminación de usuarios...$(NC)"
-	$(PYTHON) tools/cognito/delete_cognito_users.py
-
-.PHONY: cognito-test-interactive
-cognito-test-interactive: ## Ejecuta test interactivo de registro y confirmación
-	@echo "$(GREEN)Ejecutando test interactivo de Cognito...$(NC)"
-	$(PYTHON) tools/cognito/test_cognito_user_interactive.py
-
-.PHONY: cognito-test-demo
-cognito-test-demo: ## Ejecuta demo de registro (sin interacción)
-	@echo "$(GREEN)Ejecutando demo de Cognito...$(NC)"
-	$(PYTHON) tools/cognito/test_cognito_user_demo.py
-	
-	
 .PHONY: test-watch
 test-watch: ## Ejecuta tests en modo watch (requiere pytest-watch)
 	@echo "$(GREEN)Ejecutando tests en modo watch...$(NC)"

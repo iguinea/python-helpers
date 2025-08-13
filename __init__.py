@@ -11,9 +11,8 @@ __author__ = "Iñaki Guinea <iguinea@gmail.com>"
 try:
     from . import custom_auth
     from . import custom_aws
-    from . import custom_cognito
 
-    __all__ = ["custom_auth", "custom_aws", "custom_cognito"]
+    __all__ = ["custom_auth", "custom_aws"]
 except ImportError:
     # When running tests, imports might fail
     __all__ = []

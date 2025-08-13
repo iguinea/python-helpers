@@ -44,6 +44,11 @@ from .credentials import (
     validate_credentials,
 )
 
+from .cognito import (
+    test_cognito_connection,
+    CognitoManager,
+)
+
 __all__ = [
     # Secrets Manager
     "get_secret_fields",
@@ -77,4 +82,7 @@ __all__ = [
     "assume_role_session",
     "get_credentials_provider",
     "validate_credentials",
+    # Cognito
+    "test_cognito_connection",
+    "CognitoManager",
 ]

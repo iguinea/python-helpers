@@ -14,29 +14,15 @@ Middleware de autenticación por API key para aplicaciones Starlette/FastAPI.
 - Rutas públicas configurables
 - Fácil integración con frameworks web
 
-#### [Custom Cognito](custom_cognito.md)
-Autenticación completa con AWS Cognito para aplicaciones FastAPI.
-
-**Características principales:**
-- Registro de usuarios con verificación por email
-- Login con tokens JWT (access token y refresh token)
-- Multi-Factor Authentication (MFA)
-- Recuperación de contraseña
-- Validación de tokens contra JWKS de Cognito
-- Endpoints REST listos para usar
-
-**📖 Documentación adicional:**
-- [**Guía de Snippets**](custom_cognito_snippets.md) - Ejemplos de código para todas las funciones
-- [**Cookbook**](custom_cognito_cookbook.md) - Recetas completas y casos de uso avanzados
-
 ### ☁️ [Custom AWS](custom_aws.md)
-Utilidades para servicios AWS, incluyendo gestión de credenciales, Secrets Manager, SQS y SNS.
+Utilidades para servicios AWS, incluyendo gestión de credenciales, Secrets Manager, SQS, SNS y Cognito.
 
 **Características principales:**
 - **[Credentials](custom_aws_credentials.md)**: Gestión flexible de credenciales AWS con múltiples proveedores
 - **Secrets Manager**: Recuperación segura de secretos, parsing automático de JSON
 - **[SQS](custom_aws_sqs.md)**: Envío y recepción de mensajes, manejo de colas
 - **[SNS](custom_aws_sns.md)**: Publicación de notificaciones, gestión de suscripciones
+- **[Cognito](custom_aws_cognito.md)**: Autenticación y gestión de usuarios con AWS Cognito
 - Manejo robusto de errores AWS
 - Validación de campos requeridos
 
@@ -61,14 +47,6 @@ from custom_auth.middleware import create_authentication_middleware
 
 middleware = create_authentication_middleware(api_key="secret-key")
 
-# Autenticación con AWS Cognito
-from custom_cognito import CognitoService, get_current_user
-from fastapi import Depends
-
-@app.get("/protected")
-async def protected_route(user = Depends(get_current_user)):
-    return {"user": user}
-
 # AWS Credentials
 from custom_aws.credentials import get_boto3_session, CredentialProvider
 
@@ -91,6 +69,25 @@ from custom_aws.sns import publish_message, subscribe
 
 publish_message("arn:aws:sns:region:123456789:topic", "Notificación")
 subscribe("arn:aws:sns:region:123456789:topic", "email", "user@example.com")
+
+# AWS Cognito
+from custom_aws.cognito import register_user, authenticate_user
+
+# Registrar usuario
+register_user(
+    user_pool_id="eu-west-1_XXXXX",
+    client_id="abc123",
+    email="user@example.com",
+    password="SecurePass123!"
+)
+
+# Autenticar
+tokens = authenticate_user(
+    user_pool_id="eu-west-1_XXXXX",
+    client_id="abc123",
+    email="user@example.com",
+    password="SecurePass123!"
+)
 ```
 
 ## 📖 Guías de Uso
@@ -137,8 +134,6 @@ Ejecutar tests de un módulo específico:
 ```bash
 make test-custom-auth
 make test-custom-aws
-# Para custom_cognito:
-cd custom_cognito && pytest
 ```
 
 ## 🤝 Contribuir

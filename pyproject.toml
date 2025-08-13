@@ -41,7 +41,7 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["custom_auth", "custom_aws", "custom_cognito"]
+include = ["custom_auth", "custom_aws"]
 exclude = ["tests*"]
 
 [tool.pytest.ini_options]
