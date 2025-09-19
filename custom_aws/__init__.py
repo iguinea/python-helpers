@@ -45,7 +45,6 @@ from .credentials import (
 )
 
 from .cognito import (
-    test_cognito_connection,
     CognitoManager,
 )
 
@@ -83,6 +82,5 @@ __all__ = [
     "get_credentials_provider",
     "validate_credentials",
     # Cognito
-    "test_cognito_connection",
     "CognitoManager",
 ]

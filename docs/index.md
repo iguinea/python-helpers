@@ -15,14 +15,13 @@ Middleware de autenticación por API key para aplicaciones Starlette/FastAPI.
 - Fácil integración con frameworks web
 
 ### ☁️ [Custom AWS](custom_aws.md)
-Utilidades para servicios AWS, incluyendo gestión de credenciales, Secrets Manager, SQS, SNS y Cognito.
+Utilidades para servicios AWS, incluyendo gestión de credenciales, Secrets Manager, SQS, SNS.
 
 **Características principales:**
 - **[Credentials](custom_aws_credentials.md)**: Gestión flexible de credenciales AWS con múltiples proveedores
 - **Secrets Manager**: Recuperación segura de secretos, parsing automático de JSON
 - **[SQS](custom_aws_sqs.md)**: Envío y recepción de mensajes, manejo de colas
 - **[SNS](custom_aws_sns.md)**: Publicación de notificaciones, gestión de suscripciones
-- **[Cognito](custom_aws_cognito.md)**: Autenticación y gestión de usuarios con AWS Cognito
 - Manejo robusto de errores AWS
 - Validación de campos requeridos
 
@@ -70,24 +69,6 @@ from custom_aws.sns import publish_message, subscribe
 publish_message("arn:aws:sns:region:123456789:topic", "Notificación")
 subscribe("arn:aws:sns:region:123456789:topic", "email", "user@example.com")
 
-# AWS Cognito
-from custom_aws.cognito import register_user, authenticate_user
-
-# Registrar usuario
-register_user(
-    user_pool_id="eu-west-1_XXXXX",
-    client_id="abc123",
-    email="user@example.com",
-    password="SecurePass123!"
-)
-
-# Autenticar
-tokens = authenticate_user(
-    user_pool_id="eu-west-1_XXXXX",
-    client_id="abc123",
-    email="user@example.com",
-    password="SecurePass123!"
-)
 ```
 
 ## 📖 Guías de Uso

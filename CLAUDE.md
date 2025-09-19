@@ -38,6 +38,29 @@ uv run pytest tests/custom_auth/   # Run specific module tests
 uv run pytest -m unit       # Run by markers
 ```
 
+### Linting and Formatting
+```bash
+make lint              # Run ruff linter
+make format            # Format code with ruff
+make type-check        # Run mypy type checking
+make pre-commit        # Run format, lint, and unit tests before commit
+```
+
+### Running Single Tests
+```bash
+# Run a specific test file
+uv run pytest tests/custom_aws/test_secrets.py
+
+# Run a specific test function
+uv run pytest tests/custom_aws/test_secrets.py::TestParseSecretJson::test_parse_with_required_fields_success
+
+# Run tests matching a pattern
+uv run pytest -k "test_cognito"
+
+# Run tests with detailed output
+make test-verbose      # Or: uv run pytest -vv -s
+```
+
 ### Package Management
 - This project uses `pyproject.toml` for dependency management
 - Minimum Python version: 3.13
@@ -54,15 +77,19 @@ The project is organized into independent modules, each serving a specific purpo
   - Includes `create_api_key_verifier()` for FastAPI dependency-based authentication
 
 - **custom_aws/**: AWS service utilities  
+  - `cognito.py`: AWS Cognito User Pools authentication utilities
   - `credentials.py`: Flexible AWS credentials management with multiple providers
   - `secrets.py`: AWS Secrets Manager integration
   - `sqs.py`: Amazon SQS message queue utilities
   - `sns.py`: Amazon SNS notification service utilities
+  - Provides `CognitoManager` class for user registration, authentication, and management
+  - Provides `test_cognito_connection()` for testing Cognito connectivity
   - Provides `get_boto3_session()`, `assume_role_session()`, `validate_credentials()` for credential management
   - Provides `get_secret_fields()` for retrieving specific fields from JSON secrets
   - Provides `send_message()`, `receive_messages()`, `delete_message()` for SQS operations
   - Provides `publish_message()`, `subscribe()`, `unsubscribe()` for SNS operations
   - Includes robust error handling for AWS exceptions
+  - Supports AWS_PROFILE environment variable for credential management
 
 ### Design Patterns
 - Each module exposes its public API through `__init__.py` files
@@ -70,15 +97,26 @@ The project is organized into independent modules, each serving a specific purpo
 - Middleware pattern for authentication (compatible with Starlette/FastAPI)
 - All modules are designed to be imported and used independently
 
+### Test Structure
+Tests are organized under `tests/` directory mirroring the source structure:
+- Tests use pytest with markers: `unit`, `integration`, `integration_real`, `slow`
+- Mocking uses `moto` library for AWS services
+- Common fixtures are defined in `tests/conftest.py`
+
 ### Important Notes from CLAUDE.local.md
 - Use SOLID principles when creating software
 - You are an expert Python developer
+- Use Python UV environment for this project
+- Do what has been asked; nothing more, nothing less
+- Never create files unless absolutely necessary
+- Always prefer editing existing files over creating new ones
 
 ## Documentation
 Comprehensive documentation is available in the `/docs` directory:
 - `docs/index.md` - Main documentation index
 - `docs/custom_auth.md` - Authentication middleware documentation
 - `docs/custom_aws.md` - AWS utilities documentation
+- `docs/custom_aws_cognito.md` - AWS Cognito authentication documentation
 - `docs/custom_aws_credentials.md` - AWS credentials management documentation
 - `docs/custom_aws_sns.md` - Amazon SNS utilities documentation
 - `docs/custom_aws_sqs.md` - Amazon SQS utilities documentation
