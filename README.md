@@ -19,7 +19,6 @@ python-helpers/
 ├── custom_auth/
 │   └── middleware.py      # Middleware de autenticación para APIs
 ├── custom_aws/
-│   ├── cognito.py         # Utilidades para AWS Cognito User Pools
 │   ├── credentials.py     # Gestión de credenciales AWS
 │   ├── secrets.py         # Utilidades para AWS Secrets Manager
 │   ├── sqs.py             # Utilidades para Amazon SQS
@@ -55,34 +54,6 @@ async def protected_endpoint(verified: None = Depends(verify_api_key)):
 ```
 
 ### ☁️ Custom AWS
-#### AWS Cognito
-**`custom_aws.cognito`** - Gestión de autenticación de usuarios con AWS Cognito User Pools
-
-```python
-from custom_aws.cognito import CognitoManager
-
-# Crear el manager
-manager = CognitoManager(
-    user_pool_id="eu-west-1_XXXXXXXXX",
-    client_id="1234567890abcdef",
-    client_secret="tu-client-secret"  # Opcional
-)
-
-# Registrar usuario
-result = manager.register_user(
-    email="usuario@ejemplo.com",
-    password="ContraseñaSegura123!",
-    attributes={"name": "Juan Pérez"}
-)
-
-# Autenticar
-tokens = manager.authenticate_user(
-    email="usuario@ejemplo.com",
-    password="ContraseñaSegura123!"
-)
-print(f"Access Token: {tokens['access_token']}")
-```
-
 #### AWS Credentials
 **`custom_aws.credentials`** - Gestión flexible de credenciales AWS con múltiples proveedores
 

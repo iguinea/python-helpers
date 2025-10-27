@@ -55,7 +55,7 @@ uv run pytest tests/custom_aws/test_secrets.py
 uv run pytest tests/custom_aws/test_secrets.py::TestParseSecretJson::test_parse_with_required_fields_success
 
 # Run tests matching a pattern
-uv run pytest -k "test_cognito"
+uv run pytest -k "test_sqs"
 
 # Run tests with detailed output
 make test-verbose      # Or: uv run pytest -vv -s
@@ -76,14 +76,11 @@ The project is organized into independent modules, each serving a specific purpo
   - Supports multiple authentication methods (Bearer token, X-API-Key header, query parameter)
   - Includes `create_api_key_verifier()` for FastAPI dependency-based authentication
 
-- **custom_aws/**: AWS service utilities  
-  - `cognito.py`: AWS Cognito User Pools authentication utilities
+- **custom_aws/**: AWS service utilities
   - `credentials.py`: Flexible AWS credentials management with multiple providers
   - `secrets.py`: AWS Secrets Manager integration
   - `sqs.py`: Amazon SQS message queue utilities
   - `sns.py`: Amazon SNS notification service utilities
-  - Provides `CognitoManager` class for user registration, authentication, and management
-  - Provides `test_cognito_connection()` for testing Cognito connectivity
   - Provides `get_boto3_session()`, `assume_role_session()`, `validate_credentials()` for credential management
   - Provides `get_secret_fields()` for retrieving specific fields from JSON secrets
   - Provides `send_message()`, `receive_messages()`, `delete_message()` for SQS operations
@@ -116,7 +113,6 @@ Comprehensive documentation is available in the `/docs` directory:
 - `docs/index.md` - Main documentation index
 - `docs/custom_auth.md` - Authentication middleware documentation
 - `docs/custom_aws.md` - AWS utilities documentation
-- `docs/custom_aws_cognito.md` - AWS Cognito authentication documentation
 - `docs/custom_aws_credentials.md` - AWS credentials management documentation
 - `docs/custom_aws_sns.md` - Amazon SNS utilities documentation
 - `docs/custom_aws_sqs.md` - Amazon SQS utilities documentation
